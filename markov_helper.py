@@ -1,3 +1,5 @@
+import random
+
 def fetch_corpus(str):
     input_file = None
     if str == "taylor":
@@ -62,3 +64,32 @@ def is_valid_end(str):
 #This function should produce the number of words in the string provided
 def words_in_string(str):
     return len(str.split())
+    
+def generate_text(model, sentences_to_generate=5, input_words=2, minimum_sentence_length=3):
+    
+    text = [] #An array of sentences
+    words_added = 0
+    for i in range(sentences_to_generate):
+        sentence = ""
+        #Choose a sentence starting location from the keys of the hash. Remember the rules!
+        starting_point = random.choice(list(model.keys()))
+        
+        while is_valid_start(starting_point) == False:
+            starting_point = random.choice(list(model.keys()))
+        
+        sentence += starting_point
+        
+        #Loop infinitely until we have reached the valid end of a sentence 
+        while True: 
+            key = " ".join(sentence.split()[-input_words:])
+            
+            next_generated_word = random.choice(model[key])
+            
+            sentence += (" " + next_generated_word)
+            
+            if words_in_string(sentence) >= minimum_sentence_length and is_valid_end(sentence):
+                text.append(sentence)
+                break
+        
+        
+    return '\n'.join(text)
